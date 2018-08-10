@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Signin Page</title>
+</head>
+<body>
+
+    <h2>Signin</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form action="/process/login" method="POST">
+        {% csrf_token %}
+        Email Address: <input type="text" name="email">
+        Password: <input type="text" name="password">
+        <input type="submit" value="Login">
+    </form>
+
+    <a href="/register">Don't have an account? Register</a>
+    
+</body>
+</html>

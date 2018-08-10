@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>User Information</title>
+</head>
+<body>
+    
+    <nav>
+        <h1>Test App</h1>
+        {% if user_level.user_level == 9000 %}
+            <a href="/dashboard/admin">Dashboard</a>
+        {% else %}
+            <a href="/dashboard">Dashboard</a>
+        {% endif %}
+        <a href="/users/show/{{ request.session.user_id }}">Profile</a>
+        <a href="/logout">Log off</a>
+    </nav>
+
+    <h2>{{ users.first_name }} {{ users.last_name }} 
+        {% if request.session.user_id == users.id %}
+            <a href="/users/edit/{{ request.session.user_id }}">Edit Profile</a>
+        {% endif %}
+    </h2>
+    <p>Registered at: {{ users.created_at }}</p>
+    <p>User ID: #{{ users.id }}</p>
+    <p>Email address: {{ users.email }}</p>
+    <p>Description: {{ users.description }}</p>
+
+    <h2>Leave a message for {{ users.first_name }}</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    <form action="/process/message" method="POST">
+        {% csrf_token %}
+        <textarea name="message" cols="150" rows="15"></textarea>
+        <input type="hidden" name="user_id" value="{{ users.id }}">
+        <input type="hidden" name="poster_id" value="{{ request.session.user_id }}">
+        <input type="submit" value="Post">
+    </form>
+
+    {% for user_message in user_messages %}
+        <p><a href="/users/show/{{ user_message.poster.id }}">{{ user_message.poster.first_name }}</a> {{ user_message.created_at|timesince }}</p>
+        <p>{{user_message.content}}</p>
+        {% for comment in user_message.comments.all %}
+            <p><a href="/users/show/{{ comment.poster.id }}">{{comment.poster.first_name}}</a> {{ comment.created_at|timesince }}</p>
+            <p style:"margin-left: 300px;">{{ comment.content }}</p>
+        {% endfor %}
+        <form action="/process/comment" method="POST" style:"margin-left: 300px;">
+            {% csrf_token %}
+            <textarea name="comment" placeholder="write a message" cols="150" rows="10"></textarea>
+            <input type="hidden" name="message_id" value="{{ user_message.id }}">
+            <input type="hidden" name="poster_id" value="{{ request.session.user_id}}">
+            <input type="hidden" name="user_id" value="{{ users.id }}">
+            <input type="submit" value="Post">
+        </form>
+    {% endfor %}
+
+
+
+</body>
+</html>

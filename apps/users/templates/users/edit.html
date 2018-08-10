@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+</head>
+<body>
+
+    {% if user_level.user_level == 9000 %}
+        <a href="/dashboard/admin">Dashboard</a>
+    {% else %}
+        <a href="/dashboard">Dashboard</a>
+    {% endif %}
+    <a href="/users/show/{{ request.session.user_id }}">Profile</a>
+    <a href="/logout">Log off</a>
+
+
+    <h2>Edit Profile</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <h4>Edit Information</h4>
+    <form action="/edit/info" method="POST">
+        {% csrf_token %}
+        Email Address:
+        <input type="text" name="email" value="{{ user.email }}">
+        First Name:
+        <input type="text" name="first" value="{{ user.first_name }}">
+        Last Name:
+        <input type="text" name="last" value="{{ user.last_name }}">
+        {% if user_level.user_level == 9000 %}
+            <select name="user_type">
+                <option value="1">Normal</option>
+                <option value="9000">Admin</option>
+            </select>
+        {% endif %}
+        <input type="hidden" name="user_id" value="{{ user.id }}">
+        <input type="submit" value="Save">
+    </form>
+
+    <h4>Change Password</h4>
+    <form action="/edit/password" method="POST">
+        {% csrf_token %}
+        Password:
+        <input type="text" name="password">
+        Password Confirmation:
+        <input type="text" name="confirm_password">
+        <input type="hidden" name="user_id" value="{{ user.id }}">
+        <input type="submit" value="Update Password">
+    </form>
+
+    {% if request.session.user_id == user.id %}
+        <h4>Description</h4>
+        <form action="/edit/description" method="POST">
+            {% csrf_token %}
+            Description:
+            <textarea name="description" cols="150" rows="20">{{ user.description }}</textarea>
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+            <input type="submit" value="Save">
+        </form>
+    {% endif %}
+    
+</body>
+</html>

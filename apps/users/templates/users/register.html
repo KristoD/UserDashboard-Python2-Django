@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Register</title>
+</head>
+<body>
+
+    <h2>Register</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form action="/process/register" method="POST">
+        {% csrf_token %}
+        Email Address: <input type="text" name="email">
+        First Name: <input type="text" name="first">
+        Last Name: <input type="text" name="last">
+        Password: <input type="text" name="password">
+        Password Confirmation: <input type="text" name="confirm_password">
+        <input type="submit" name="Register">
+    </form>
+
+    <a href="/login">Already have an account? Login</a>
+    
+</body>
+</html>
